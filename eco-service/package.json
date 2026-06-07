@@ -1,0 +1,45 @@
+{
+  "name": "eco-service",
+  "version": "1.0.0",
+  "description": "Еко-сервіс для прибирання та екологічних ініціатив",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "jest --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=html",
+    "test:ci": "jest --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit",
+    "test:watch": "jest --watch"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/app.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 70,
+        "branches": 70,
+        "functions": 70,
+        "statements": 70
+      }
+    },
+    "coverageDirectory": "coverage",
+    "reporters": [
+      "default"
+    ]
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-junit": "^17.0.0"
+  },
+  "keywords": [
+    "ecology",
+    "cleanup",
+    "node",
+    "tdd"
+  ],
+  "author": "Eco-Service Team",
+  "license": "MIT"
+}

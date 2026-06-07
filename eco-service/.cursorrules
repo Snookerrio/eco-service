@@ -1,0 +1,43 @@
+# EcoService — AI Rules for Cursor / Claude / Copilot
+
+## MANDATORY RULES (never violate)
+- NEVER generate code without interfaces or abstract base classes
+- ALWAYS write tests (TDD) BEFORE or alongside implementation
+- NEVER use external databases (MongoDB, PostgreSQL, etc.) — use In-Memory repositories only
+- NEVER use external APIs or HTTP calls in business logic
+- ALWAYS implement Repository pattern for data access
+- ALWAYS use dependency injection (pass dependencies via constructor)
+- NEVER use Singleton pattern except for NotificationService
+- EVERY service must receive its repositories via constructor
+
+## ARCHITECTURE
+- 4-layer architecture: Models → Repositories → Services → (Tests)
+- Models: Pure domain objects, no business logic side effects
+- Repositories: In-memory Map-based storage, extend BaseRepository
+- Services: Business logic only, no direct storage access
+- Utils: Strategies (GoF), EventEmitter (Observer), ID generation
+
+## PATTERNS (GoF required)
+- Strategy: Points calculation (StandardPointsStrategy, BonusMultiplierStrategy, etc.)
+- Observer: NotificationService extends EventEmitter
+- Repository: BaseRepository extended by domain-specific repos
+
+## SOLID PRINCIPLES
+- SRP: Each class has one responsibility
+- OCP: Extend via strategies, not modification
+- LSP: All strategies implement BasePointsStrategy interface
+- ISP: Repositories have focused interfaces
+- DIP: Services depend on abstractions, not concrete classes
+
+## TESTING RULES
+- Coverage threshold: 70% minimum (currently ~97%)
+- Test file pattern: tests/**/*.test.js
+- Use jest.fn() for mocks, never real HTTP calls
+- Test edge cases: empty inputs, null, negative numbers, boundary values
+- Integration tests go in tests/integration/
+
+## FORBIDDEN
+- require('axios'), require('mongoose'), require('sequelize'), require('knex')
+- Any fetch() or HTTP client in src/
+- Global state except resetCounters() in tests
+- console.log in production code
