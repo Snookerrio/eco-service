@@ -27,18 +27,7 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
-        env:
-          JEST_JUNIT_OUTPUT_DIR: ./reports/junit
-          JEST_JUNIT_OUTPUT_NAME: junit.xml
         run: npm run test:ci
-
-      - name: Upload JUnit XML report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: junit-test-results
-          path: reports/junit/junit.xml
-          retention-days: 30
 
       - name: Upload HTML coverage report
         uses: actions/upload-artifact@v4
@@ -63,12 +52,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.organization=snookerrio
-            -Dsonar.projectKey=snookerrio_eco-service
+            -Dsonar.organization=Snookerrio
+            -Dsonar.projectKey=Snookerrio_eco-service
             -Dsonar.sources=src
             -Dsonar.tests=tests
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.testExecutionReportPaths=reports/junit/junit.xml
             -Dsonar.qualitygate.wait=true
 
   quality-gate:
