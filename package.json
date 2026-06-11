@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "test": "jest --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=html",
-    "test:ci": "jest --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit",
+    "test:ci": "jest --coverage --coverageReporters=lcov --ci",
     "test:watch": "jest --watch"
   },
   "jest": {
@@ -25,21 +25,12 @@
         "statements": 70
       }
     },
-    "coverageDirectory": "coverage",
-    "reporters": [
-      "default"
-    ]
+    "coverageDirectory": "coverage"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "jest-junit": "^16.0.0"
+    "jest": "^29.7.0"
   },
-  "keywords": [
-    "ecology",
-    "cleanup",
-    "node",
-    "tdd"
-  ],
+  "keywords": ["ecology", "cleanup", "node", "tdd"],
   "author": "Eco-Service Team",
   "license": "MIT"
 }
