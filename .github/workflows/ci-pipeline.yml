@@ -52,8 +52,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.organization=Snookerrio
-            -Dsonar.projectKey=Snookerrio_eco-service
+            -Dsonar.organization=snookerrio
+            -Dsonar.projectKey=snookerrio_eco-service
             -Dsonar.sources=src
             -Dsonar.tests=tests
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
