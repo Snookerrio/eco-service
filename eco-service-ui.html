@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 Еко-сервіс</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #1a1a1a; min-height: 100vh; }
+.app { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
+.top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: white; padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid #e8e8e8; }
+.logo { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+.logo span { color: #1D9E75; }
+.user-info { display: flex; align-items: center; gap: 10px; }
+.pts-badge { background: #EAF3DE; color: #3B6D11; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: #EAF3DE; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #3B6D11; }
+.nav { display: flex; gap: 4px; padding: 0.75rem; background: white; border-radius: 12px; border: 1px solid #e8e8e8; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.nav-btn { padding: 8px 16px; font-size: 13px; border: 1px solid #e8e8e8; border-radius: 8px; cursor: pointer; background: transparent; color: #666; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+.nav-btn.active, .nav-btn:hover { background: #EAF3DE; color: #3B6D11; border-color: #c0dd97; }
+.page { display: none; }
+.page.active { display: block; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.stat { background: white; border-radius: 10px; padding: 1rem 1.25rem; border: 1px solid #e8e8e8; }
+.stat-label { font-size: 12px; color: #888; margin-bottom: 6px; }
+.stat-val { font-size: 26px; font-weight: 600; color: #1a1a1a; }
+.stat-val.green { color: #1D9E75; }
+.section-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 1rem; }
+.card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.card-title { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+.badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+.badge-open { background: #EAF3DE; color: #3B6D11; }
+.badge-ongoing { background: #E6F1FB; color: #185FA5; }
+.badge-completed { background: #f1f1f1; color: #666; }
+.badge-draft { background: #FAEEDA; color: #BA7517; }
+.card-meta { font-size: 13px; color: #888; margin-bottom: 10px; display: flex; gap: 12px; flex-wrap: wrap; }
+.progress-bar { height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; border-radius: 3px; background: #1D9E75; }
+.card-actions { display: flex; justify-content: space-between; align-items: center; }
+.btn { padding: 7px 16px; font-size: 13px; border: 1px solid #e8e8e8; border-radius: 8px; cursor: pointer; background: white; color: #1a1a1a; transition: all 0.15s; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { background: #f5f5f5; }
+.btn-primary { background: #1D9E75; color: white; border-color: #1D9E75; }
+.btn-primary:hover { background: #0F6E56; }
+.btn-danger { background: white; color: #D85A30; border-color: #D85A30; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.filter-row { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+.filter-btn { padding: 5px 14px; font-size: 12px; border: 1px solid #e8e8e8; border-radius: 20px; cursor: pointer; background: white; color: #666; transition: all 0.15s; }
+.filter-btn.active { background: #1D9E75; color: white; border-color: #1D9E75; }
+.map-area { background: #f0f4f0; border: 1px solid #e8e8e8; border-radius: 12px; height: 320px; position: relative; overflow: hidden; margin-bottom: 1rem; }
+.map-grid { position: absolute; inset: 0; opacity: 0.3; background-image: linear-gradient(#c8d8c8 1px, transparent 1px), linear-gradient(90deg, #c8d8c8 1px, transparent 1px); background-size: 60px 60px; }
+.map-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 20px; font-weight: 700; color: #ccd8cc; letter-spacing: 4px; }
+.map-point { position: absolute; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: transform 0.15s; z-index: 2; }
+.map-point:hover { transform: scale(1.2); }
+.map-point.cleanup { background: #1D9E75; }
+.map-point.planting { background: #639922; }
+.map-point.recycling { background: #378ADD; }
+.map-point.awareness { background: #BA7517; }
+.map-tooltip { position: absolute; background: white; border: 1px solid #e8e8e8; border-radius: 8px; padding: 8px 12px; font-size: 12px; pointer-events: none; display: none; z-index: 10; min-width: 150px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.map-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 1.5rem; }
+.cal-day-name { font-size: 11px; color: #888; text-align: center; padding: 6px 0; font-weight: 500; }
+.cal-day { font-size: 13px; text-align: center; padding: 8px 4px; border-radius: 8px; cursor: default; color: #1a1a1a; position: relative; }
+.cal-day.has-event { background: #EAF3DE; color: #3B6D11; font-weight: 600; cursor: pointer; }
+.cal-day.has-event:hover { background: #c0dd97; }
+.cal-day.today { border: 2px solid #1D9E75; font-weight: 600; }
+.cal-day.other-month { color: #ccc; }
+.event-list { display: flex; flex-direction: column; gap: 8px; }
+.event-item { display: flex; gap: 12px; align-items: center; padding: 12px; background: white; border: 1px solid #e8e8e8; border-radius: 10px; }
+.event-date-box { background: #f8f8f8; border: 1px solid #e8e8e8; border-radius: 8px; padding: 8px 12px; text-align: center; min-width: 50px; }
+.event-day { font-size: 20px; font-weight: 700; line-height: 1; color: #1a1a1a; }
+.event-month { font-size: 10px; color: #888; text-transform: uppercase; margin-top: 2px; }
+.event-info { flex: 1; }
+.event-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+.event-meta { font-size: 12px; color: #888; }
+.leaderboard-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+.leaderboard-row:last-child { border-bottom: none; }
+.rank { font-size: 16px; min-width: 32px; text-align: center; }
+.lb-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+.lb-name { flex: 1; font-size: 14px; font-weight: 500; color: #1a1a1a; }
+.lb-bar { width: 90px; height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+.lb-fill { height: 100%; border-radius: 3px; background: #1D9E75; }
+.lb-pts { font-size: 13px; color: #888; min-width: 70px; text-align: right; }
+.me-label { font-size: 11px; color: #1D9E75; font-weight: 500; }
+.prize-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.prize-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s; }
+.prize-card:hover { border-color: #c0dd97; }
+.prize-icon { font-size: 32px; margin-bottom: 4px; }
+.prize-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+.prize-desc { font-size: 12px; color: #888; }
+.prize-cost { font-size: 13px; color: #888; }
+.prize-cost .pts { color: #1D9E75; font-weight: 600; }
+.prize-stock { font-size: 11px; color: #888; }
+.notif { background: white; border: 1px solid #e8e8e8; border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+.notif-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.notif-icon.reward { background: #EAF3DE; color: #3B6D11; }
+.notif-icon.info { background: #E6F1FB; color: #185FA5; }
+.notif-icon.warning { background: #FAEEDA; color: #BA7517; }
+.notif-icon.prize { background: #FBEAF0; color: #993556; }
+.notif-text { flex: 1; font-size: 13px; color: #1a1a1a; line-height: 1.4; }
+.notif-time { font-size: 11px; color: #888; white-space: nowrap; }
+.notif.unread { border-left: 3px solid #1D9E75; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; margin-right: 4px; }
+.tag-cleanup { background: #EAF3DE; color: #3B6D11; }
+.tag-planting { background: #E6F1FB; color: #185FA5; }
+.tag-recycling { background: #FAEEDA; color: #BA7517; }
+.tag-awareness { background: #FBEAF0; color: #993556; }
+.empty { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
+.pts-info { font-size: 12px; color: #888; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-header">
+    <div class="logo">🌿 Еко-<span>сервіс</span></div>
+    <div class="user-info">
+      <span class="pts-badge">⭐ <span id="user-pts">150</span> балів</span>
+      <div class="avatar">ЮК</div>
+      <span style="font-size:14px;font-weight:500;">Юрій Колодка</span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showPage('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Головна</button>
+    <button class="nav-btn" onclick="showPage('initiatives',this)"><i class="ti ti-leaf"></i> Ініціативи</button>
+    <button class="nav-btn" onclick="showPage('map',this)"><i class="ti ti-map-pin"></i> Карта</button>
+    <button class="nav-btn" onclick="showPage('calendar',this)"><i class="ti ti-calendar"></i> Календар</button>
+    <button class="nav-btn" onclick="showPage('leaderboard',this)"><i class="ti ti-trophy"></i> Рейтинг</button>
+    <button class="nav-btn" onclick="showPage('prizes',this)"><i class="ti ti-gift"></i> Призи</button>
+    <button class="nav-btn" onclick="showPage('notifications',this)"><i class="ti ti-bell"></i> Сповіщення <span style="background:#D85A30;color:white;border-radius:10px;padding:1px 6px;font-size:10px;">3</span></button>
+  </nav>
+
+  <!-- ГОЛОВНА -->
+  <div id="page-dashboard" class="page active">
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Активних ініціатив</div><div class="stat-val green">8</div></div>
+      <div class="stat"><div class="stat-label">Учасників всього</div><div class="stat-val">124</div></div>
+      <div class="stat"><div class="stat-label">Точок на карті</div><div class="stat-val">37</div></div>
+      <div class="stat"><div class="stat-label">Подій цього місяця</div><div class="stat-val">12</div></div>
+      <div class="stat"><div class="stat-label">Мої бали</div><div class="stat-val green">150</div></div>
+    </div>
+    <div class="section-title">Мої ініціативи</div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Прибирання парку Франка</span><span class="badge badge-ongoing">Ongoing</span></div>
+      <div class="card-meta"><span><i class="ti ti-users"></i> 18/30 учасників</span><span><i class="ti ti-map-pin"></i> Парк Франка, Львів</span><span>🏆 30 балів</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+      <div class="card-actions"><span class="pts-info">60% заповнено</span><button class="btn btn-sm" onclick="showPage('initiatives',document.querySelectorAll('.nav-btn')[1])">Деталі</button></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Озеленення Сихова</span><span class="badge badge-open">Open</span></div>
+      <div class="card-meta"><span><i class="ti ti-users"></i> 7/20 учасників</span><span><i class="ti ti-map-pin"></i> Сихівський парк</span><span>🏆 20 балів</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+      <div class="card-actions"><span class="pts-info">35% заповнено</span><button class="btn btn-sm btn-primary" onclick="joinInitiative(this,'init-2')">Приєднатись</button></div>
+    </div>
+    <div style="margin-top:1.5rem;" class="section-title">Найближчі події</div>
+    <div class="event-list">
+      <div class="event-item">
+        <div class="event-date-box"><div class="event-day">14</div><div class="event-month">Чер</div></div>
+        <div class="event-info"><div class="event-title">Збір учасників — Парк Франка</div><div class="event-meta"><i class="ti ti-clock"></i> 17:00 · вул. Стрийська, 3</div></div>
+        <button class="btn btn-sm btn-primary">RSVP</button>
+      </div>
+      <div class="event-item">
+        <div class="event-date-box"><div class="event-day">15</div><div class="event-month">Чер</div></div>
+        <div class="event-info"><div class="event-title">Прибирання парку Франка</div><div class="event-meta"><i class="ti ti-clock"></i> 10:00 · Парк Франка</div></div>
+        <button class="btn btn-sm btn-primary">RSVP</button>
+      </div>
+      <div class="event-item">
+        <div class="event-date-box"><div class="event-day">20</div><div class="event-month">Чер</div></div>
+        <div class="event-info"><div class="event-title">Садіння дерев — Сихів</div><div class="event-meta"><i class="ti ti-clock"></i> 09:00 · Сихівський парк</div></div>
+        <button class="btn btn-sm">Деталі</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ІНІЦІАТИВИ -->
+  <div id="page-initiatives" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div class="section-title" style="margin:0;">Всі ініціативи</div>
+      <button class="btn btn-primary btn-sm"><i class="ti ti-plus"></i> Створити</button>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterInit(this,'all')">Всі</button>
+      <button class="filter-btn" onclick="filterInit(this,'open')">Відкриті</button>
+      <button class="filter-btn" onclick="filterInit(this,'ongoing')">Активні</button>
+      <button class="filter-btn" onclick="filterInit(this,'completed')">Завершені</button>
+    </div>
+    <div id="init-list">
+      <div class="card" data-status="ongoing" id="init-1">
+        <div class="card-header"><span class="card-title">Прибирання парку Франка</span><span class="badge badge-ongoing">Ongoing</span></div>
+        <div class="card-meta"><span><span class="tag tag-cleanup">cleanup</span></span><span><i class="ti ti-users"></i> 18/30</span><span>🏆 30 балів</span><span><i class="ti ti-map-pin"></i> Львів</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+        <div class="card-actions"><span class="pts-info">Ти вже учасник</span><button class="btn btn-sm">Деталі</button></div>
+      </div>
+      <div class="card" data-status="open" id="init-2">
+        <div class="card-header"><span class="card-title">Озеленення Сихова</span><span class="badge badge-open">Open</span></div>
+        <div class="card-meta"><span><span class="tag tag-planting">planting</span></span><span><i class="ti ti-users"></i> 7/20</span><span>🏆 20 балів</span><span><i class="ti ti-map-pin"></i> Сихів</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+        <div class="card-actions"><span class="pts-info">13 вільних місць</span><button class="btn btn-sm btn-primary" onclick="joinInitiative(this,'init-2')">Приєднатись</button></div>
+      </div>
+      <div class="card" data-status="open" id="init-3">
+        <div class="card-header"><span class="card-title">Роздільний збір сміття</span><span class="badge badge-open">Open</span></div>
+        <div class="card-meta"><span><span class="tag tag-recycling">recycling</span></span><span><i class="ti ti-users"></i> 3/15</span><span>🏆 15 балів</span><span><i class="ti ti-map-pin"></i> Центр</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+        <div class="card-actions"><span class="pts-info">12 вільних місць</span><button class="btn btn-sm btn-primary" onclick="joinInitiative(this,'init-3')">Приєднатись</button></div>
+      </div>
+      <div class="card" data-status="open" id="init-4">
+        <div class="card-header"><span class="card-title">Еко-свідомість у школах</span><span class="badge badge-open">Open</span></div>
+        <div class="card-meta"><span><span class="tag tag-awareness">awareness</span></span><span><i class="ti ti-users"></i> 5/25</span><span>🏆 25 балів</span><span><i class="ti ti-map-pin"></i> Залізничний р-н</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+        <div class="card-actions"><span class="pts-info">20 вільних місць</span><button class="btn btn-sm btn-primary" onclick="joinInitiative(this,'init-4')">Приєднатись</button></div>
+      </div>
+      <div class="card" data-status="completed" id="init-5">
+        <div class="card-header"><span class="card-title">Прибирання берега р. Полтва</span><span class="badge badge-completed">Completed</span></div>
+        <div class="card-meta"><span><span class="tag tag-cleanup">cleanup</span></span><span><i class="ti ti-users"></i> 25/25</span><span>🏆 25 балів</span><span><i class="ti ti-map-pin"></i> р. Полтва</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        <div class="card-actions"><span class="pts-info">Завершено 05.06.2026</span><button class="btn btn-sm">Переглянути</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- КАРТА -->
+  <div id="page-map" class="page">
+    <div class="section-title">Карта точок прибирань — Львів</div>
+    <div class="map-area" id="map-container">
+      <div class="map-grid"></div>
+      <div class="map-label">ЛЬВІВ</div>
+      <div class="map-point cleanup" style="left:38%;top:42%;" onclick="showTooltip(event,'Парк Франка','cleanup','18 учасників · ongoing')">🗑</div>
+      <div class="map-point planting" style="left:56%;top:60%;" onclick="showTooltip(event,'Сихівський парк','planting','7 учасників · open')">🌱</div>
+      <div class="map-point recycling" style="left:27%;top:33%;" onclick="showTooltip(event,'Центр міста','recycling','3 учасники · open')">♻️</div>
+      <div class="map-point cleanup" style="left:64%;top:28%;" onclick="showTooltip(event,'Залізничний р-н','cleanup','11 учасників · ongoing')">🗑</div>
+      <div class="map-point planting" style="left:45%;top:20%;" onclick="showTooltip(event,'Кульпарків','planting','5 учасників · open')">🌱</div>
+      <div class="map-point awareness" style="left:70%;top:55%;" onclick="showTooltip(event,'Школа №45','awareness','5 учасників · open')">📢</div>
+      <div class="map-point cleanup" style="left:20%;top:60%;" onclick="showTooltip(event,'р. Полтва','cleanup','25 учасників · completed')">🗑</div>
+      <div id="map-tooltip" class="map-tooltip"></div>
+    </div>
+    <div class="map-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1D9E75;"></div>Прибирання (cleanup)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#639922;"></div>Озеленення (planting)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#378ADD;"></div>Переробка (recycling)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#BA7517;"></div>Обізнаність (awareness)</div>
+    </div>
+    <div class="section-title">Пошук точок поблизу</div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
+      <input type="text" placeholder="Введіть адресу..." style="flex:1;min-width:200px;padding:8px 12px;border:1px solid #e8e8e8;border-radius:8px;font-size:13px;">
+      <select style="padding:8px 12px;border:1px solid #e8e8e8;border-radius:8px;font-size:13px;">
+        <option>Радіус 1 км</option>
+        <option>Радіус 3 км</option>
+        <option selected>Радіус 5 км</option>
+        <option>Радіус 10 км</option>
+      </select>
+      <button class="btn btn-primary btn-sm"><i class="ti ti-search"></i> Знайти</button>
+    </div>
+  </div>
+
+  <!-- КАЛЕНДАР -->
+  <div id="page-calendar" class="page">
+    <div class="calendar-header">
+      <div class="section-title" style="margin:0;">Червень 2026</div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-sm"><i class="ti ti-chevron-left"></i></button>
+        <button class="btn btn-sm"><i class="ti ti-chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="calendar-grid">
+      <div class="cal-day-name">Пн</div><div class="cal-day-name">Вт</div><div class="cal-day-name">Ср</div><div class="cal-day-name">Чт</div><div class="cal-day-name">Пт</div><div class="cal-day-name">Сб</div><div class="cal-day-name">Нд</div>
+      <div class="cal-day other-month">26</div><div class="cal-day other-month">27</div><div class="cal-day other-month">28</div><div class="cal-day other-month">29</div><div class="cal-day other-month">30</div><div class="cal-day other-month">31</div><div class="cal-day">1</div>
+      <div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div>
+      <div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day today">12</div><div class="cal-day">13</div><div class="cal-day has-event" title="Збір учасників">14</div><div class="cal-day has-event" title="Прибирання">15</div>
+      <div class="cal-day">16</div><div class="cal-day">17</div><div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day has-event" title="Садіння дерев">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+      <div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day has-event" title="Семінар">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+      <div class="cal-day">30</div><div class="cal-day other-month">1</div><div class="cal-day other-month">2</div><div class="cal-day other-month">3</div><div class="cal-day other-month">4</div><div class="cal-day other-month">5</div><div class="cal-day other-month">6</div>
+    </div>
+    <div class="section-title">Всі події місяця</div>
+    <div class="event-list">
+      <div class="event-item">
+        <div class="event-date-box"><div class="event-day">14</div><div class="event-month">Чер</div></div>
+        <div class="event-info"><div class="event-title">Збір учасників — Парк Франка</div><div class="event-meta"><i class="ti ti-clock"></i> 17:00 · вул. Стрийська, 3 · 12 учасників</div></div>
+        <button class="btn btn-sm btn-primary" onclick="rsvp(this)">RSVP</button>
+      </div>
+      <div class="event-item">
+        <div class="event-date-box"><div class="event-day">15</div><div class="event-month">Чер</div></div>
+        <div class="event-info"><div class="event-title">Прибирання парку Франка</div><div class="event-meta"><i class="ti ti-clock"></i> 10:00 · Парк Франка · 18 учасників</div></div>
+        <button class="btn btn-sm btn-primary" onclick="rsvp(this)">RSVP</button>
+      </div>
+      <div class="event-item">
+        <div class="event-date-box"><div class="event-day">20</div><div class="event-month">Чер</div></div>
+        <div class="event-info"><div class="event-title">Садіння дерев — Сихів</div><div class="event-meta"><i class="ti ti-clock"></i> 09:00 · Сихівський парк · 7 учасників</div></div>
+        <button class="btn btn-sm btn-primary" onclick="rsvp(this)">RSVP</button>
+      </div>
+      <div class="event-item">
+        <div class="event-date-box"><div class="event-day">26</div><div class="event-month">Чер</div></div>
+        <div class="event-info"><div class="event-title">Семінар: Роздільний збір відходів</div><div class="event-meta"><i class="ti ti-clock"></i> 14:00 · Онлайн · Zoom</div></div>
+        <button class="btn btn-sm" onclick="rsvp(this)">Зареєструватись</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- РЕЙТИНГ -->
+  <div id="page-leaderboard" class="page">
+    <div class="section-title">Рейтинг учасників</div>
+    <div class="card" style="padding:1.25rem;">
+      <div class="leaderboard-row">
+        <div class="rank">🥇</div>
+        <div class="lb-avatar" style="background:#FAEEDA;color:#BA7517;">СК</div>
+        <div class="lb-name">Софія Коваль</div>
+        <div class="lb-bar"><div class="lb-fill" style="width:100%"></div></div>
+        <div class="lb-pts">320 балів</div>
+      </div>
+      <div class="leaderboard-row">
+        <div class="rank">🥈</div>
+        <div class="lb-avatar" style="background:#E6F1FB;color:#185FA5;">МП</div>
+        <div class="lb-name">Максим Поліщук</div>
+        <div class="lb-bar"><div class="lb-fill" style="width:78%"></div></div>
+        <div class="lb-pts">250 балів</div>
+      </div>
+      <div class="leaderboard-row">
+        <div class="rank">🥉</div>
+        <div class="lb-avatar" style="background:#E1F5EE;color:#0F6E56;">ОШ</div>
+        <div class="lb-name">Олена Шевченко</div>
+        <div class="lb-bar"><div class="lb-fill" style="width:62%"></div></div>
+        <div class="lb-pts">200 балів</div>
+      </div>
+      <div class="leaderboard-row" style="background:#f8fff8;border-radius:8px;padding:12px 8px;">
+        <div class="rank">4</div>
+        <div class="lb-avatar" style="background:#EAF3DE;color:#3B6D11;">ЮК</div>
+        <div class="lb-name">Юрій Колодка <span class="me-label">(ви)</span></div>
+        <div class="lb-bar"><div class="lb-fill" style="width:47%"></div></div>
+        <div class="lb-pts">150 балів</div>
+      </div>
+      <div class="leaderboard-row">
+        <div class="rank">5</div>
+        <div class="lb-avatar" style="background:#FBEAF0;color:#993556;">ІБ</div>
+        <div class="lb-name">Іванна Бойко</div>
+        <div class="lb-bar"><div class="lb-fill" style="width:34%"></div></div>
+        <div class="lb-pts">110 балів</div>
+      </div>
+      <div class="leaderboard-row">
+        <div class="rank">6</div>
+        <div class="lb-avatar" style="background:#f1f1f1;color:#666;">ДЛ</div>
+        <div class="lb-name">Дмитро Лисенко</div>
+        <div class="lb-bar"><div class="lb-fill" style="width:25%"></div></div>
+        <div class="lb-pts">80 балів</div>
+      </div>
+      <div class="leaderboard-row">
+        <div class="rank">7</div>
+        <div class="lb-avatar" style="background:#EEEDFE;color:#534AB7;">АМ</div>
+        <div class="lb-name">Андрій Мельник</div>
+        <div class="lb-bar"><div class="lb-fill" style="width:15%"></div></div>
+        <div class="lb-pts">50 балів</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПРИЗИ -->
+  <div id="page-prizes" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div class="section-title" style="margin:0;">Каталог призів</div>
+      <span class="pts-badge">⭐ <span id="prizes-pts">150</span> балів</span>
+    </div>
+    <div class="prize-grid">
+      <div class="prize-card">
+        <div class="prize-icon">🌱</div>
+        <div class="prize-name">Еко-торбинка</div>
+        <div class="prize-desc">Багаторазова сумка з натуральних матеріалів</div>
+        <div class="prize-cost">Вартість: <span class="pts">50 балів</span></div>
+        <div class="prize-stock">Залишок: 12 шт.</div>
+        <button class="btn btn-sm btn-primary" onclick="redeem(this,50,'Еко-торбинка')">Обміняти</button>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">💧</div>
+        <div class="prize-name">Еко-пляшка</div>
+        <div class="prize-desc">Термопляшка з нержавіючої сталі</div>
+        <div class="prize-cost">Вартість: <span class="pts">80 балів</span></div>
+        <div class="prize-stock">Залишок: 8 шт.</div>
+        <button class="btn btn-sm btn-primary" onclick="redeem(this,80,'Еко-пляшка')">Обміняти</button>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">🌿</div>
+        <div class="prize-name">Набір насіння</div>
+        <div class="prize-desc">10 видів овочів та квітів для балкону</div>
+        <div class="prize-cost">Вартість: <span class="pts">120 балів</span></div>
+        <div class="prize-stock">Залишок: 20 шт.</div>
+        <button class="btn btn-sm btn-primary" onclick="redeem(this,120,'Набір насіння')">Обміняти</button>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">♻️</div>
+        <div class="prize-name">Компостер</div>
+        <div class="prize-desc">Домашній компостер для органічних відходів</div>
+        <div class="prize-cost">Вартість: <span class="pts">200 балів</span></div>
+        <div class="prize-stock">Залишок: 5 шт.</div>
+        <button class="btn btn-sm" disabled>Недостатньо балів</button>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">🚲</div>
+        <div class="prize-name">Велоаксесуари</div>
+        <div class="prize-desc">Набір для безпечної велоїзди</div>
+        <div class="prize-cost">Вартість: <span class="pts">300 балів</span></div>
+        <div class="prize-stock">Залишок: 3 шт.</div>
+        <button class="btn btn-sm" disabled>Недостатньо балів</button>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">🌳</div>
+        <div class="prize-name">Власне дерево</div>
+        <div class="prize-desc">Посадка дерева з табличкою вашого імені</div>
+        <div class="prize-cost">Вартість: <span class="pts">500 балів</span></div>
+        <div class="prize-stock">Залишок: 2 шт.</div>
+        <button class="btn btn-sm" disabled>Недостатньо балів</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- СПОВІЩЕННЯ -->
+  <div id="page-notifications" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div class="section-title" style="margin:0;">Сповіщення</div>
+      <button class="btn btn-sm" onclick="markAllRead()">Позначити всі як прочитані</button>
+    </div>
+    <div id="notif-list">
+      <div class="notif unread">
+        <div class="notif-icon reward"><i class="ti ti-star"></i></div>
+        <div class="notif-text">Вітаємо! Ініціативу "Прибирання берега р. Полтва" завершено. Ви заробили <strong>25 балів</strong>!</div>
+        <div class="notif-time">2 год тому</div>
+      </div>
+      <div class="notif unread">
+        <div class="notif-icon info"><i class="ti ti-calendar"></i></div>
+        <div class="notif-text">Нова подія: "Збір учасників" заплановано на 14 червня о 17:00 в Парку Франка.</div>
+        <div class="notif-time">5 год тому</div>
+      </div>
+      <div class="notif unread">
+        <div class="notif-icon prize"><i class="ti ti-gift"></i></div>
+        <div class="notif-text">Новий приз у каталозі: "Набір насіння" за 120 балів. У вас достатньо балів!</div>
+        <div class="notif-time">вчора</div>
+      </div>
+      <div class="notif">
+        <div class="notif-icon info"><i class="ti ti-leaf"></i></div>
+        <div class="notif-text">Нова ініціатива: "Озеленення Сихова" — приєднуйтесь! Відкрито 13 місць.</div>
+        <div class="notif-time">2 дні тому</div>
+      </div>
+      <div class="notif">
+        <div class="notif-icon reward"><i class="ti ti-star"></i></div>
+        <div class="notif-text">Ви заробили <strong>30 балів</strong> за участь в ініціативі "Прибирання парку Франка".</div>
+        <div class="notif-time">3 дні тому</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let userPoints = 150;
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    const btns = document.querySelectorAll('.nav-btn');
+    const names = ['dashboard','initiatives','map','calendar','leaderboard','prizes','notifications'];
+    const idx = names.indexOf(name);
+    if (idx >= 0) btns[idx].classList.add('active');
+  }
+}
+
+function filterInit(btn, status) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#init-list .card').forEach(c => {
+    c.style.display = (status === 'all' || c.dataset.status === status) ? 'block' : 'none';
+  });
+}
+
+function joinInitiative(btn, id) {
+  btn.textContent = '✓ Ви учасник';
+  btn.className = 'btn btn-sm';
+  btn.disabled = true;
+  const card = document.getElementById(id);
+  if (card) {
+    const meta = card.querySelector('.pts-info');
+    if (meta) meta.textContent = 'Ти вже учасник';
+  }
+}
+
+function rsvp(btn) {
+  btn.textContent = '✓ Зареєстровано';
+  btn.className = 'btn btn-sm';
+  btn.disabled = true;
+}
+
+function redeem(btn, cost, name) {
+  if (userPoints >= cost) {
+    userPoints -= cost;
+    document.getElementById('user-pts').textContent = userPoints;
+    document.getElementById('prizes-pts').textContent = userPoints;
+    btn.textContent = '✓ Отримано!';
+    btn.className = 'btn btn-sm';
+    btn.disabled = true;
+    document.querySelectorAll('.prize-card').forEach(card => {
+      const costEl = card.querySelector('.pts');
+      if (costEl) {
+        const cardCost = parseInt(costEl.textContent);
+        const cardBtn = card.querySelector('button');
+        if (cardBtn && !cardBtn.disabled && cardCost > userPoints) {
+          cardBtn.disabled = true;
+          cardBtn.textContent = 'Недостатньо балів';
+          cardBtn.className = 'btn btn-sm';
+        }
+      }
+    });
+  }
+}
+
+function markAllRead() {
+  document.querySelectorAll('.notif.unread').forEach(n => n.classList.remove('unread'));
+  const badge = document.querySelector('.nav-btn:last-child span');
+  if (badge) badge.remove();
+}
+
+function showTooltip(e, name, category, info) {
+  const tooltip = document.getElementById('map-tooltip');
+  const container = document.getElementById('map-container');
+  const rect = container.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const cats = { cleanup: '🗑 Прибирання', planting: '🌱 Озеленення', recycling: '♻️ Переробка', awareness: '📢 Обізнаність' };
+  tooltip.innerHTML = '<strong>' + name + '</strong><br>' + cats[category] + '<br><span style="color:#888">' + info + '</span>';
+  tooltip.style.display = 'block';
+  let left = x + 12;
+  if (left + 160 > container.offsetWidth) left = x - 165;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = Math.max(0, y - 45) + 'px';
+  setTimeout(() => { tooltip.style.display = 'none'; }, 3000);
+}
+</script>
+</body>
+</html>
